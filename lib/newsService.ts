@@ -15,6 +15,23 @@ export interface NewsArticle {
   content?: string;
 }
 
+interface NewsApiArticle {
+  title: string;
+  description: string;
+  url: string;
+  publishedAt: string;
+  source: {
+    name: string;
+  };
+  urlToImage?: string;
+  author?: string;
+  content?: string;
+}
+
+interface NewsApiResponse {
+  articles: NewsApiArticle[];
+}
+
 export async function fetchTopHeadlines(category?: string): Promise<NewsArticle[]> {
   try {
     if (!API_KEY) {
@@ -30,8 +47,8 @@ export async function fetchTopHeadlines(category?: string): Promise<NewsArticle[
       throw new Error('Failed to fetch news');
     }
 
-    const data = await response.json();
-    return data.articles.map((article: any, index: number) => ({
+    const data: NewsApiResponse = await response.json();
+    return data.articles.map((article: NewsApiArticle, index: number) => ({
       id: `${index}-${article.publishedAt}`,
       title: article.title,
       description: article.description,
@@ -62,8 +79,8 @@ export async function searchNews(query: string): Promise<NewsArticle[]> {
       throw new Error('Failed to search news');
     }
 
-    const data = await response.json();
-    return data.articles.map((article: any, index: number) => ({
+    const data: NewsApiResponse = await response.json();
+    return data.articles.map((article: NewsApiArticle, index: number) => ({
       id: `${index}-${article.publishedAt}`,
       title: article.title,
       description: article.description,
